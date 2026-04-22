@@ -1,0 +1,482 @@
+{
+  "info": {
+    "_postman_id": "11f9d948-a885-4937-8ecb-375c6317a090",
+    "name": "apbd_cw5",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54239590",
+    "_collection_link": "https://go.postman.co/collection/54239590-11f9d948-a885-4937-8ecb-375c6317a090?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - GET all rooms",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response is an array\", function () {\r",
+              "    const data = pm.response.json();\r",
+              "    pm.expect(Array.isArray(data)).to.eql(true);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "rooms"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "02 - GET room by id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Room has id\", function () {\r",
+              "    const data = pm.response.json();\r",
+              "    pm.expect(data.id).to.eql(1);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "rooms",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "03 - GET rooms by building",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"All rooms are in building B\", function () {\r",
+              "    const data = pm.response.json();\r",
+              "    pm.expect(Array.isArray(data)).to.eql(true);\r",
+              "    data.forEach(r => pm.expect((r.buildingCode || \"\").toUpperCase()).to.eql(\"B\"));\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms/building/B",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "rooms",
+            "building",
+            "B"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "04 - GET rooms with query filters",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Filtered rooms meet criteria\", function () {\r",
+              "    const data = pm.response.json();\r",
+              "    data.forEach(r => {\r",
+              "        pm.expect(r.capacity).to.be.at.least(20);\r",
+              "        pm.expect(r.hasProjector).to.eql(true);\r",
+              "        pm.expect(r.isActive).to.eql(true);\r",
+              "    });\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms?minCapacity=20&hasProjector=true&activeOnly=true",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "rooms"
+          ],
+          "query": [
+            {
+              "key": "minCapacity",
+              "value": "20"
+            },
+            {
+              "key": "hasProjector",
+              "value": "true"
+            },
+            {
+              "key": "activeOnly",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "05 - POST create room",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Created room has id\", function () {\r",
+              "    const data = pm.response.json();\r",
+              "    pm.expect(data.id).to.exist;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Save created room id\", function () {\r",
+              "    const data = pm.response.json();\r",
+              "    pm.collectionVariables.set(\"createdRoomId\", data.id);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Lab 204\",\r\n  \"buildingCode\": \"B\",\r\n  \"floor\": 2,\r\n  \"capacity\": 24,\r\n  \"hasProjector\": true,\r\n  \"isActive\": true\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "rooms"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "06 - PUT update room",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Room updated\", function () {\r",
+              "    const data = pm.response.json();\r",
+              "    pm.expect(data.name).to.eql(\"Lab 204 Updated\");\r",
+              "    pm.expect(data.floor).to.eql(3);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"id\": 0,\r\n  \"name\": \"Lab 204 Updated\",\r\n  \"buildingCode\": \"B\",\r\n  \"floor\": 3,\r\n  \"capacity\": 28,\r\n  \"hasProjector\": true,\r\n  \"isActive\": true\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms/7",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "rooms",
+            "7"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "07 - POST create reservation valid",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Created reservation has id\", function () {\r",
+              "    const data = pm.response.json();\r",
+              "    pm.expect(data.id).to.exist;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Save reservation id\", function () {\r",
+              "    const data = pm.response.json();\r",
+              "    pm.collectionVariables.set(\"createdReservationId\", data.id);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"roomId\": 5,\r\n  \"organizerName\": \"Anna Kowalska\",\r\n  \"topic\": \"Warsztaty z HTTP i REST\",\r\n  \"date\": \"2026-05-10\",\r\n  \"startTime\": \"10:00:00\",\r\n  \"endTime\": \"12:30:00\",\r\n  \"status\": \"confirmed\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/reservations",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reservations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "08 - POST reservation conflict",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 409\", function () {\r",
+              "    pm.response.to.have.status(409);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"roomId\": 5,\r\n  \"organizerName\": \"Jan Testowy\",\r\n  \"topic\": \"Kolizja czasowa\",\r\n  \"date\": \"2026-05-10\",\r\n  \"startTime\": \"11:00:00\",\r\n  \"endTime\": \"12:00:00\",\r\n  \"status\": \"planned\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/reservations",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reservations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "09 - DELETE reservation",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 204\", function () {\r",
+              "    pm.response.to.have.status(204);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/reservations/5",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reservations",
+            "5"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "10 - GET room not found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms/999999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "rooms",
+            "999999"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost:44356"
+    },
+    {
+      "key": "createdRoomId",
+      "value": ""
+    }
+  ]
+}
